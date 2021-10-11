@@ -1,3 +1,3 @@
-# Learning where to learn:Gradient sparsity in meta and continual learning
+# Learning where to learn: Gradient sparsity in meta and continual learning
 
 Code coming soon! 
