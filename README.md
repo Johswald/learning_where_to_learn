@@ -1,5 +1,3 @@
-require 'kramdown'
-
 # Learning where to learn - Gradient sparsity in meta and continual learning
 
 In this paper, we investigate gradient sparsity found by [MAML](https://arxiv.org/abs/1703.03400/) in various continual and few-shot learning scenarios.\
@@ -15,7 +13,7 @@ Interestingly, we see that structured sparsity emerges in both the classic
 This is accompanied by improved robustness and generalisation across many 
 hyperparameters.
 
-![Screenshot](utils/images/image.jpg | width=200)
+![Screenshot](utils/images/image.jpg&s=200)
 
 
 Note that Sparse-MAML is an extremely simple variant of MAML that possesses only 
