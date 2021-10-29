@@ -13,7 +13,7 @@ Interestingly, we see that structured sparsity emerges in both the classic
 This is accompanied by improved robustness and generalisation across many 
 hyperparameters.
 
-![Screenshot](utils/images/image.jpg)
+![Screenshot](utils/images/image.jpg | width=200)
 
 
 Note that Sparse-MAML is an extremely simple variant of MAML that possesses only 
