@@ -6,7 +6,7 @@ a step function that stops gradient descent when smaller then 0.
 
 We term this version **Sparse-MAML** - Link to the paper [here](https://arxiv.org/abs/2110.14402).
 
-![](utils/images/sparse_MAML.gif)
+<img src="https://github.com/Johswald/learning_where_to_learn/blob/main/utils/images/sparse_MAML.gif?raw=true" width="75%">
 
 Interestingly, we see that structured sparsity emerges in both the classic 
 4-layer ConvNet as well as a ResNet-12 for few-shot learning. 
