@@ -4,7 +4,7 @@ In this paper, we investigate gradient sparsity found by [MAML](https://arxiv.or
 Instead of only learning the initialization of neural network parameters, we additionally meta-learn parameters underneath 
 a step function that stops gradient descent when smaller then 0.      
 
-We term this version **Sparse-MAML** - Link to the paper [here](TODO).
+We term this version **Sparse-MAML** - Link to the paper [here](https://arxiv.org/abs/2110.14402).
 
 ![](utils/images/sparse_MAML.gif)
 
