@@ -13,7 +13,7 @@ Interestingly, we see that structured sparsity emerges in both the classic
 This is accompanied by improved robustness and generalisation across many 
 hyperparameters.
 
-![Screenshot](utils/images/image.jpg)
+<img src="https://github.com/Johswald/learning_where_to_learn/blob/main/utils/images/image.jpg?raw=true" width="75%">
 
 Note that Sparse-MAML is an extremely simple variant of MAML that possesses only 
 the possibility to shut on/off training of specific parameters compared to proper gradient modulation. 
