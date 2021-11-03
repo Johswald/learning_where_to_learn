@@ -5,7 +5,6 @@ from torchvision.transforms import ToTensor, Resize, Compose
 from torchvision import transforms
 
 from torchmeta.utils.data import BatchMetaDataLoader
-import hp_search_grid as hpsearch
 from utils.cub_cars_downloader import CUB, CARS
 
 def list_to_str(list_arg, delim=' '):
@@ -30,40 +29,6 @@ def get_subdict(adict, name):
         return adict
     tmp = {k[len(name) + 1:]:adict[k] for k in adict if name in k}
     return tmp
-
-def save_performance_summary(args):
-
-    # save some stuff in a pickle for later 
-    train_epochs = args.epochs
-
-    tp = dict()
-
-    tp["mean_sparsity_best"] = args.mean_sparsity_best
-    tp["mean_sparsity_end"] = args.mean_sparsity_end
-    tp["best_acc_epoch"] = args.best_acc_epoch
-    tp["best_acc"] = args.best_acc
-    tp["end_acc"] = args.end_acc 
-    tp["cross_datasets_name"] = list_to_str(args.cross_datasets_name)
-    tp["cross_datasets_best_accs"] = list_to_str(args.cross_datasets_best_accs)
-    tp["finished"] = 1
-
-    # Note, the keywords of this dictionary are defined by the array:
-    #   hpsearch._SUMMARY_KEYWORDS
-    
-    print(os.path.join(args.out_dir,
-                           hpsearch._SUMMARY_FILENAME))
-    with open(os.path.join(args.out_dir,
-                           hpsearch._SUMMARY_FILENAME), 'w') as f:
-
-        for kw in hpsearch._SUMMARY_KEYWORDS:
-            if kw == 'num_train_epochs':
-                f.write('%s %d\n' % ('num_train_epochs', train_epochs))
-                continue
-            else:
-                try:
-                    f.write('%s %f\n' % (kw, tp[kw]))
-                except:
-                    f.write('%s %s\n' % (kw, tp[kw]))
 
 def load_data(args):
     meta_dataloader={}
