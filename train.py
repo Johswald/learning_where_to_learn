@@ -257,11 +257,7 @@ def training_loop(args, metalearner, meta_dataloader, ):
         meta_dataloader, _,_ = utils.load_data(args)
         acc =metalearner.evaluate(meta_dataloader["test"],
                                     args.batches_test, epoch, test=True)
-        acc_cross_datasets.append(acc)
-
-    args.cross_datasets_name = datasets
-    args.cross_datasets_best_accs = acc_cross_datasets
-    utils.save_performance_summary(args)
+        
     writer.close()
 
 if __name__ == "__main__":
