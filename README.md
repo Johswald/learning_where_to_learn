@@ -52,8 +52,8 @@ To reproduce the results in the paper, please follow these instructions:
 
 | MiniImageNet Few-Shot   | MAML  | ANIL  | BOIL  | sparse-MAML | sparse-ReLU-MAML |
 |-------------------------|:-------:|:-------:|:-------:|:-------------:|:------------------:|
-| 5-way 5-shot \| ConvNet | 63.15 | 61.50 | 66.45 | 67.03       |64.84             |
-| 5-way 1-shot \| ConvNet | 48.07 | 46.70 | 49.61 | 50.35       |50.39             |
+| 5-way 5-shot \| ConvNet | 63.15 | 61.50 | 66.45 | 67.03       |66.80             |
+| 5-way 1-shot \| ConvNet | 48.07 | 46.70 | 49.61 | 50.35       |50.15             |
 | 5-way 5-shot \| ResNet12  | 69.36 | 70.03 | 70.50 | 70.02         |73.01         |
 | 5-way 1-shot \| ResNet12  | 53.91 | 55.25 | -     | 55.02          |56.39           |
 
