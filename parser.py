@@ -34,6 +34,8 @@ def get_parser():
                         help='Number of meta-testing tasks')
     parser.add_argument('--batches_val',type=int,default=300,
                         help='Number of meta-testing tasks if validating')
+    parser.add_argument('--num_workers', type=int, default=2,
+                        help='Number of workers for dataloader.')
 
     # Optimizer config
     parser.add_argument('--optimizer_theta',type=str,default="ADAM",
@@ -46,8 +48,8 @@ def get_parser():
                         help='Outer loop learning rate for masks.')
     parser.add_argument('--momentum',type=float,default=0.9, 
                         help='Momentum for SGD (turns on Nesterov)')
-    parser.add_argument('--num_workers', type=int, default=2,
-                        help='Number of workers for dataloader.')
+    parser.add_argument('--clamp_outer_gradients', action='store_true',
+                        help='Clamp gradients .')    
 
     # Main network config
     parser.add_argument('--resnet', action='store_true',
@@ -77,7 +79,7 @@ def get_parser():
                         help='Number of gradient steps in inner loop')
     parser.add_argument('--gradient_step_sampling',type=int, default=0,
                         help='Range of gradient steps sampled.')
-    parser.add_argument('--gradient_steps_test',type=int,default=100,
+    parser.add_argument('--gradient_steps_test',type=int,default=35,
                         help='Number of gradient steps in inner loop')
     parser.add_argument('--second_order',action='store_true',default=False,
                         help='Use second order in MAML (NOT TESTED)')
@@ -106,9 +108,10 @@ def get_parser():
                         help='Meta-SGD straigth through relu.')
     parser.add_argument('--meta_sgd_linear', action='store_true',default=False,
                         help='Meta-SGD linear instead of Relu.') 
+    parser.add_argument('--meta_exp', action='store_true',
+                        help='Exp learning rate instead Relu.')
     parser.add_argument('--meta_sgd_init', action='store_true',
                         help='Init uniform [0.005, 0.1].')
-    parser.add_argument('--meta_exp', action='store_true',
-                                    help='Init uniform [0.005, 0.1].')
-
+    parser.add_argument('--meta_constant_init', action='store_true',
+                        help='Constant init as step_size.')
     return parser

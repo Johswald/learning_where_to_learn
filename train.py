@@ -44,7 +44,6 @@ class MAML(object):
             train_targets = task[1].to(args.device) 
             test_inputs = task[2].to(args.device)
             test_targets = task[3].to(args.device)
-
             #MASK
             if args.gradient_mask or args.weight_mask:
                 mask = self.mask.forward()
@@ -55,6 +54,7 @@ class MAML(object):
                     params[name] = param*mask[name]
                 else:
                     params[name] = param
+                
             #INNER LOOP
             self.model.zero_grad()
             self.optimizer_theta.zero_grad()
@@ -63,10 +63,8 @@ class MAML(object):
                 self.optimizer_mask.zero_grad()
                         
             ra = args.gradient_step_sampling
-            gs_sample = np.random.randint(low=args.gradient_steps-ra, 
-                                          high=args.gradient_steps+ra+1)
 
-            for t in range(gs_sample):
+            for t in range(args.gradient_steps):
                 train_logits = self.model(train_inputs, params=params)
                 inner_loss = self.loss_function(train_logits, train_targets)
                 self.model.zero_grad()
@@ -79,10 +77,10 @@ class MAML(object):
                         if args.meta_relu_through or args.meta_sgd_linear or \
                            args.meta_relu or args.meta_exp:
                             params_next[name] = \
-                                    param-(grad*mask[name])
+                                    param-(mask[name]*grad)
                         else:
                             params_next[name] = \
-                                    param-args.step_size*(grad*mask[name])
+                                    param-args.step_size*(mask[name]*grad)
                     elif args.weight_mask and name in mask and \
                                               name in self.inner_loop_params:
                         params_next[name] = \
@@ -97,7 +95,7 @@ class MAML(object):
             test_logit = self.model(test_inputs, params=params)
             outer_loss += self.loss_function(test_logit, test_targets)
             outer_accuracy += self.accuracy(test_logit, test_targets)
-
+        
         outer_accuracy = float(outer_accuracy)/counter
 
         if evaluation:
@@ -113,23 +111,34 @@ class MAML(object):
         
         # backward and step
         outer_loss.backward()
+        if args.clamp_outer_gradients:
+            for name, param in self.model.named_parameters():
+                if param.requires_grad:
+                    param.grad.data.clamp_(-10, 10)
+
         self.optimizer_theta.step()
         if args.gradient_mask or args.weight_mask:
             self.optimizer_mask.step()
 
         return outer_loss.detach(), outer_accuracy, mask
 
-    def train(self, dataloader, max_batches=500, epoch= None):
+    def train(self, dataloader, max_batches=500,epoch=None):
         
         # Training for one epoch  
         num_batches = 0
+        acc, loss = 0., 0.
         for batch in dataloader:
             if num_batches >= max_batches:
                 break
-            loss, acc, masks = self.step(batch)
+            l, a, masks = self.step(batch)
+            loss += l
+            acc += a
             num_batches += 1
-        
+        acc /= num_batches
+        loss /= num_batches
+
         # Write some stats
+        mean_sparsity = 0.
         with torch.no_grad():
             if args.tensorboard:
                 writer.add_scalar('Training Loss', loss, epoch)
@@ -257,17 +266,19 @@ def training_loop(args, metalearner, meta_dataloader, ):
         meta_dataloader, _,_ = utils.load_data(args)
         acc =metalearner.evaluate(meta_dataloader["test"],
                                     args.batches_test, epoch, test=True)
-        
+        acc_cross_datasets.append(acc)
+
+    args.cross_datasets_name = datasets
+    args.cross_datasets_best_accs = acc_cross_datasets
+    utils.save_performance_summary(args)
     writer.close()
 
 if __name__ == "__main__":
-
     """
     **************************************************************
     Main function to train sparse-MAML on few-shot learning tasks. 
     **************************************************************
     """
-
     parser = parser.get_parser()  
     args = parser.parse_args()
 
@@ -312,8 +323,12 @@ if __name__ == "__main__":
                                     bias=args.bias).to(args.device)
     else:
         classifier = models.ResNet(out_features=args.num_ways, 
-                                    big_network=args.big_resnet).to(args.device)
-    
+                                   big_network=args.big_resnet).to(args.device)
+
+        for name, params in classifier.named_parameters():
+            if "bias" in name:
+                nn.init.zeros_(params)
+
     loss_function = torch.nn.CrossEntropyLoss().to(args.device)
     parameters = [{'params': classifier.parameters(), 'lr': args.lr},]
 
@@ -331,6 +346,7 @@ if __name__ == "__main__":
             if args.no_bn_in_inner_loop and "norm" in name:
                 continue
         inner_loop_params.append(name)
+    
     # MASK plus
     if args.gradient_mask_plus and (args.gradient_mask or args.weight_mask):
         if args.resnet:
@@ -365,14 +381,13 @@ if __name__ == "__main__":
 
         # NOTE: The parameters of mask_plus are contained in mask
         if args.optimizer_mask == "ADAM" or args.optimizer_mask == "Adam":
-            optimizer_mask=torch.optim.Adam(mask.parameters(),args.mask_lr)
+            optimizer_mask=torch.optim.Adam(mask.parameters(), args.mask_lr)
 
         else:
             optimizer_mask=torch.optim.SGD(mask.parameters(), args.mask_lr, 
                                                 momentum=args.momentum,
                                                 nesterov=(args.momentum > 0.0))
         print("\nMask optimizer:", optimizer_mask)
-
     else:
         optimizer_mask = None
 
@@ -397,5 +412,5 @@ if __name__ == "__main__":
         metalearner.mask=mask
         if args.gradient_mask_plus:
             metalearner.mask=mask
-
+    print("\nStart training ... \n")
     training_loop(args, metalearner, meta_dataloader)
