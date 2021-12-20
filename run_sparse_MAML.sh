@@ -28,7 +28,7 @@ python3 train.py --epochs=40 --batches_train=1000 --batches_test=500 --batches_v
 
 # 1-SHOT RESNET
 exe echo training 1-SHOT sparse-ReLU-MAML RESNET
-python3 train.py --epochs=40 --batches_train=1000 --batches_test=500 --batches_val=500 --batch_size=1  --num_shots_train=1 --gradient_mask --step_size=0.05 --mask_lr=0.01 --checkpoint_models --gradient_steps=35 --val_start=10 --test_start=10 --tensorboard --val_after 1 --resnet --no_bn_in_inner_loop --meta_relu_through --meta_constant_init --clamp_outer_gradients
+python3 train.py --epochs=40 --batches_train=1000 --batches_test=500 --batches_val=500 --batch_size=1  --num_shots_train=1 --gradient_mask --step_size=0.01 --mask_lr=0.01 --checkpoint_models --gradient_steps=35 --val_start=10 --test_start=10 --tensorboard --val_after 1 --resnet --no_bn_in_inner_loop --meta_relu_through --meta_constant_init --clamp_outer_gradients
 
 # 1-SHOT RESNET
 exe echo training 1-SHOT sparse-MAML RESNET
