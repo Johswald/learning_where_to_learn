@@ -107,53 +107,8 @@ def load_data(args):
         input_channels=3
 
     if args.dataset=="Omniglot":
-        dataset_transform = ClassSplitter(shuffle=True,
-                                    num_train_per_class=args.num_shots_train,
-                                    num_test_per_class=args.num_shots_test)
-        transform = Compose([Resize(28), ToTensor()])
-
-        meta_train_dataset = Omniglot("data",
-                                    transform=transform,
-                                    target_transform=Categorical(args.num_ways),
-                                    num_classes_per_task=args.num_ways,
-                                    meta_train=True,
-                                    class_augmentations=class_augmentations,
-                                    dataset_transform=dataset_transform,
-                                    download=True)
-
-        meta_val_dataset = Omniglot("data",
-                                    transform=transform,
-                                    target_transform=Categorical(args.num_ways),
-                                    num_classes_per_task=args.num_ways,
-                                    meta_val=True,
-                                    class_augmentations=class_augmentations,
-                                    dataset_transform=dataset_transform)
-        meta_test_dataset = Omniglot("data",
-                                    transform=transform,
-                                    target_transform=Categorical(args.num_ways),
-                                    num_classes_per_task=args.num_ways,
-                                    meta_test=True,
-                                    dataset_transform=dataset_transform)
-
-        meta_dataloader["train"] = BatchMetaDataLoader(meta_train_dataset,
-                                                batch_size=args.batch_size,
-                                                shuffle=True,
-                                                num_workers=args.num_workers,
-                                                pin_memory=True)
-
-        meta_dataloader["val"] = BatchMetaDataLoader(meta_val_dataset,
-                                                batch_size=args.batch_size,
-                                                shuffle=True,
-                                                num_workers=args.num_workers,
-                                                pin_memory=True)
-
-        meta_dataloader["test"]=BatchMetaDataLoader(meta_test_dataset,
-                                                batch_size=args.batch_size,
-                                                shuffle=True,
-                                                num_workers=args.num_workers,
-                                                pin_memory=True)
-        feature_size=args.hidden_size
-        input_channels=1
+        print("Omniglot not supported.")
+        exit()
 
     if args.dataset=="TieredImagenet":
         dataset_transform = ClassSplitter(shuffle=True,
